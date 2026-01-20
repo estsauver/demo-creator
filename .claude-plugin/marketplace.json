@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "demo-creator",
-      "source": ".",
+      "source": "./",
       "description": "Create professional demo videos automatically from code. Analyzes git context, generates Playwright scripts, records in Kubernetes, adds AI narration via ElevenLabs, and uploads to cloud storage.",
       "version": "0.2.1",
       "author": {
