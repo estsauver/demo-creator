@@ -1,5 +1,4 @@
 ---
-name: validate
 description: Validate demo-creator setup without creating a demo. Checks app accessibility, credentials, and dependencies.
 ---
 

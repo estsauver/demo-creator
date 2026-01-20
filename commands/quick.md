@@ -1,5 +1,4 @@
 ---
-name: quick
 description: Quick demo creation with minimal configuration. Auto-detects everything and runs with sensible defaults. Use for fast, simple demos.
 ---
 

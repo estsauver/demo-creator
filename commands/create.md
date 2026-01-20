@@ -1,5 +1,4 @@
 ---
-name: create
 description: Create professional demo videos automatically from code. Main orchestrator for 9-stage pipeline.
 ---
 

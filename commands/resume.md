@@ -1,5 +1,4 @@
 ---
-name: resume
 description: Resume a demo creation from the last checkpoint. Use when a demo was interrupted or failed partway through.
 ---
 

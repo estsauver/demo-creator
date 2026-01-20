@@ -1,5 +1,4 @@
 ---
-name: init
 description: Initialize demo-creator for your project. Auto-detects tech stack, running servers, and auth patterns. Guides you through configuration with smart defaults.
 ---
 
