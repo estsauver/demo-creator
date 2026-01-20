@@ -89,19 +89,26 @@ The plugin uses Kubernetes Jobs for isolated browser recording:
 From Claude Code:
 
 ```
+# First time? Initialize the plugin for your project:
+/demo-creator:init
+
+# Then create a demo:
 /demo-creator:create
 ```
 
-The plugin will guide you through creating a demo for your current branch.
+The init command auto-detects your tech stack, running servers, and authentication patterns, then creates a `.demo/config.yaml` file. After that, the create command will guide you through making a demo for your current branch.
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
+| `/demo-creator:init` | Initialize demo-creator for your project. Auto-detects tech stack, servers, and auth. **Run this first!** |
 | `/demo-creator:create` | Full 9-stage pipeline with guided setup |
 | `/demo-creator:quick` | Quick demo with auto-detected settings |
 | `/demo-creator:resume` | Resume an interrupted demo |
 | `/demo-creator:validate` | Validate a script without recording |
+
+> 📝 **Example session**: See [examples/init-and-create-transcript.txt](examples/init-and-create-transcript.txt) for a complete transcript of running `/demo-creator:init` followed by `/demo-creator:create`.
 
 ### Example Workflow
 
