@@ -1,7 +1,7 @@
 {
   "name": "demo-creator",
   "description": "Automatically create professional, narrated demo videos from your code. Analyzes git context, generates scripts, records in k8s, adds AI narration, and uploads to cloud storage.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Earl St Sauver"
   },
