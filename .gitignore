@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Secrets - NEVER COMMIT THESE
+*.env
+.env.*
+!.env.example
+credentials.yaml
+*-credentials.yaml
+*.pem
+*.key
+service-account*.json
+gcs-key*.json
+
+# Demo outputs (large files)
+*.cast
+*.mp4
+*.webm
+*.wav
+*.mp3
+output/
+recordings/
+
+# Keep the demo GIF for README
+!demo-creator-demo.gif
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local files
+.claude/
+
+# Temporary
+*.tmp
+*.temp
+.demo/

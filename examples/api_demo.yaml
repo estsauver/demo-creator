@@ -1,0 +1,83 @@
+# Example: API Demo Script
+# Shows how to demo a backend API using curl/httpie
+#
+# Philosophy: Demos should show the EXPERIENCE of using a feature,
+# not the EVIDENCE that it was built. Show behavior, not code!
+
+settings:
+  title: "Discussion Panel API Demo"
+  cwd: backend/
+  cols: 120
+  rows: 30
+  typing_speed: 40  # Fast typing for demos
+  post_execute_pause: 1500  # Let viewers see output
+
+  error_detection:
+    mode: smart
+    safe_contexts:
+      - "PASSED"
+      - "test_"
+      - "error_handler"
+    ignore_patterns:
+      - "ERROR"  # Ignore in test names
+
+variables:
+  API_URL: "http://localhost:8000"
+  GRAPHQL_URL: "http://localhost:8000/graphql"
+
+steps:
+  # Section 1: Introduction
+  - action: section
+    name: "API Overview"
+    content: "Discussion Panel API Demo"
+
+  - action: comment
+    content: "Let's explore the Discussion Panel API"
+
+  - action: pause
+    duration: 1000
+
+  # Section 2: Create a Discussion
+  - action: section
+    name: "Creating Discussions"
+
+  - action: run
+    content: |
+      curl -X POST {{ GRAPHQL_URL }} \
+        -H "Content-Type: application/json" \
+        -d '{"query": "mutation { startDiscussion(topic: \"Drug Repurposing\") { id status } }"}'
+    narration:
+      before: "First, let's create a new discussion"
+      after: "The discussion was created successfully"
+
+  - action: pause
+    duration: 2000
+
+  # Section 3: Stream Events
+  - action: section
+    name: "Real-time Streaming"
+
+  - action: run
+    content: "curl -N {{ API_URL }}/api/discussions/1/stream | head -20"
+    narration:
+      before: "Now watch the SSE events stream in real-time"
+    expect_error: false
+
+  - action: pause
+    duration: 3000
+
+  # Section 4: Query Results
+  - action: section
+    name: "Querying Results"
+
+  - action: run
+    content: |
+      curl -s {{ GRAPHQL_URL }} \
+        -H "Content-Type: application/json" \
+        -d '{"query": "{ discussion(id: 1) { messages { role content } } }"}' | jq .
+
+  - action: screenshot
+    name: "final-results"
+
+  - action: comment
+    content: "Demo complete!"

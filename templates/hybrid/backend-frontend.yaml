@@ -1,0 +1,135 @@
+# Backend-Frontend Hybrid Demo Template
+# Use for demonstrating how backend operations affect the frontend UI
+
+type: hybrid
+name: backend-frontend
+description: Template for showing backend operations and their UI effects
+
+layout: split
+terminal:
+  position: left
+  width_percent: 40
+
+browser:
+  position: right
+  base_url: "${BASE_URL:-http://localhost:3000}"
+  viewport:
+    width: 1920
+    height: 1080
+
+setup:
+  - run: "${SETUP_CMD:-echo 'No setup required'}"
+
+scenes:
+  - name: "Initial state"
+    narration_notes: "Let's start by looking at the current state"
+    terminal:
+      actions:
+        - type: command
+          text: "echo '=== Backend-Frontend Demo ==='"
+          delay_after: 1000
+    browser:
+      actions:
+        - goto: "${START_PAGE:-/}"
+        - wait_for_idle: true
+        - screenshot: true
+
+  - name: "Query backend"
+    narration_notes: "First, let's check what data exists in the backend"
+    terminal:
+      actions:
+        - type: command
+          text: "${QUERY_CMD:-curl -s ${API_URL:-http://localhost:8080}/api/items | jq .}"
+          delay_after: 2000
+    browser:
+      actions:
+        - wait: 1000
+        - highlight:
+            selector: "${DATA_LIST_SELECTOR:-.item-list}"
+            duration: 2000
+
+  - name: "Create via API"
+    narration_notes: "Now let's create a new item through the API"
+    terminal:
+      actions:
+        - type: command
+          text: "${CREATE_CMD:-curl -X POST ${API_URL:-http://localhost:8080}/api/items -H 'Content-Type: application/json' -d '{\"name\": \"Demo Item\"}'}"
+          delay_after: 2500
+        - type: wait_for
+          pattern: "${CREATE_SUCCESS:-id|created}"
+          timeout: 10000
+    browser:
+      actions:
+        - wait: 2000
+        - click: "${REFRESH_BUTTON:-button:has-text('Refresh')}"
+        - wait_for: "${NEW_ITEM_SELECTOR:-text=Demo Item}"
+        - highlight:
+            selector: "${NEW_ITEM_SELECTOR:-text=Demo Item}"
+            duration: 2000
+        - screenshot: true
+
+  - name: "Update via API"
+    narration_notes: "Let's update the item we just created"
+    terminal:
+      actions:
+        - type: command
+          text: "${UPDATE_CMD:-curl -X PATCH ${API_URL:-http://localhost:8080}/api/items/${ITEM_ID:-1} -H 'Content-Type: application/json' -d '{\"name\": \"Updated Item\"}'}"
+          delay_after: 2500
+        - type: wait_for
+          pattern: "${UPDATE_SUCCESS:-updated|success}"
+          timeout: 10000
+    browser:
+      actions:
+        - wait: 2000
+        - click: "${REFRESH_BUTTON:-button:has-text('Refresh')}"
+        - wait_for: "${UPDATED_ITEM_SELECTOR:-text=Updated Item}"
+        - highlight:
+            selector: "${UPDATED_ITEM_SELECTOR:-text=Updated Item}"
+            duration: 2000
+        - screenshot: true
+
+  - name: "Delete via API"
+    narration_notes: "Finally, let's delete the item"
+    terminal:
+      actions:
+        - type: command
+          text: "${DELETE_CMD:-curl -X DELETE ${API_URL:-http://localhost:8080}/api/items/${ITEM_ID:-1}}"
+          delay_after: 2000
+        - type: wait_for
+          pattern: "${DELETE_SUCCESS:-deleted|success|204}"
+          timeout: 10000
+    browser:
+      actions:
+        - wait: 2000
+        - click: "${REFRESH_BUTTON:-button:has-text('Refresh')}"
+        - wait: 1500
+        - assert_not_visible: "${DELETED_ITEM_SELECTOR:-text=Updated Item}"
+        - screenshot: true
+
+  - name: "Summary"
+    narration_notes: "We've seen how backend API operations are reflected in the UI"
+    terminal:
+      actions:
+        - type: command
+          text: "echo '✅ Demo complete!'"
+          delay_after: 1500
+    browser:
+      actions:
+        - wait: 1000
+
+teardown:
+  - run: "${TEARDOWN_CMD:-echo 'No teardown required'}"
+
+# Variables to customize:
+# BASE_URL - Frontend URL
+# API_URL - Backend API URL
+# START_PAGE - Initial page to load
+# DATA_LIST_SELECTOR - Selector for data list
+# QUERY_CMD - Command to query items
+# CREATE_CMD - Command to create item
+# UPDATE_CMD - Command to update item
+# DELETE_CMD - Command to delete item
+# REFRESH_BUTTON - Button to refresh the page
+# ITEM_ID - ID of created item for updates
+# *_SUCCESS - Success patterns to match
+# *_SELECTOR - UI selectors

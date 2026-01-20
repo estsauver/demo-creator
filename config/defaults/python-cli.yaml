@@ -1,0 +1,82 @@
+# Default configuration for Python CLI projects
+# Applied when /demo:init detects a Python CLI application
+
+version: 1
+
+project:
+  name: "${PROJECT_NAME}"
+  tech_stack: "python-cli"
+
+# CLI tools don't have a web app
+app:
+  base_url: null
+  health_check: null
+
+auth:
+  strategy: "none"
+
+test_data:
+  setup:
+    # Common Python CLI setup commands
+    - "python -m pip install -e ."
+  teardown: []
+  fixtures: []
+
+recording:
+  # CLI demos use terminal recording
+  mode: "terminal"
+  terminal:
+    cols: 120
+    rows: 40
+    shell: "/bin/zsh"
+    theme: "monokai"
+
+voice:
+  provider: "elevenlabs"
+  voice_id: "${ELEVENLABS_VOICE_ID}"
+
+avatar:
+  enabled: false
+  style: "picture-in-picture"
+  position: "bottom-right"
+  size: "small"
+
+output:
+  upload_to: "gcs"
+  bucket: "${GCS_BUCKET_NAME}"
+  make_public: true
+
+integrations:
+  linear:
+    auto_post: false
+  slack:
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#demos"
+
+# CLI-specific settings
+terminal:
+  typing:
+    speed_min: 0.03
+    speed_max: 0.10
+    mistake_probability: 0.02
+
+  # Common CLI patterns
+  prompts:
+    - "$ "
+    - ">>> "
+    - "... "
+    - "> "
+
+  # Wait patterns for common outputs
+  wait_patterns:
+    success: "success|complete|done|finished"
+    error: "error|failed|exception"
+    prompt: "\\$\\s*$|>>>\\s*$"
+
+  # Commands that should be highlighted
+  highlight_commands:
+    - "install"
+    - "init"
+    - "create"
+    - "deploy"
+    - "run"

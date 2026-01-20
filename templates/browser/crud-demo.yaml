@@ -1,0 +1,197 @@
+# Demo Template: CRUD Operations
+# Use for: Create, Read, Update, Delete demonstrations
+#
+# This template covers the common pattern of:
+# 1. View existing items
+# 2. Create a new item via form
+# 3. Edit the item
+# 4. Delete the item
+
+type: browser
+name: crud-demo
+description: Create, Read, Update, Delete demo template
+
+config:
+  base_url: "${APP_BASE_URL}"
+  viewport:
+    width: 1920
+    height: 1080
+
+setup:
+  - run: "${SEED_COMMAND}"
+
+scenes:
+  - name: "View existing items"
+    description: "Navigate to the listing page"
+    actions:
+      - goto: "${LISTING_PATH}"
+      - wait_for_idle: true
+      - wait: 1500
+      - highlight:
+          selector: "${ITEMS_CONTAINER}"
+          duration: 1500
+    narration_notes: "Here's our {ITEM_NAME} list. Let me show you how to create a new one."
+
+  - name: "Open create form"
+    description: "Click the create button"
+    actions:
+      - click: "${CREATE_BUTTON}"  # e.g., button:has-text('Create'), [aria-label='Add new']
+      - wait_for: "${FORM_CONTAINER}"
+      - wait: 1000
+      - screenshot: true
+    narration_notes: "Click the create button to open the form."
+
+  - name: "Fill form - field 1"
+    description: "Fill the first form field"
+    actions:
+      - click: "${FIELD_1_INPUT}"
+      - type:
+          text: "${FIELD_1_VALUE}"
+          human_like: true
+      - wait: 500
+    narration_notes: "Enter the {FIELD_1_NAME}..."
+
+  - name: "Fill form - field 2"
+    description: "Fill the second form field"
+    actions:
+      - click: "${FIELD_2_INPUT}"
+      - type:
+          text: "${FIELD_2_VALUE}"
+          human_like: true
+      - wait: 500
+    narration_notes: "...and the {FIELD_2_NAME}."
+
+  - name: "Submit form"
+    description: "Submit the create form"
+    actions:
+      - click: "${SUBMIT_BUTTON}"
+      - wait_for_idle: true
+      - wait: 1500
+      - screenshot: true
+    narration_notes: "Submit the form, and the new {ITEM_NAME} is created instantly."
+
+  - name: "View created item"
+    description: "Show the newly created item"
+    actions:
+      - wait_for: "${CREATED_ITEM}"
+      - highlight:
+          selector: "${CREATED_ITEM}"
+          duration: 2000
+    narration_notes: "Here's our new {ITEM_NAME} in the list."
+
+  - name: "Open edit form"
+    description: "Click edit on the item"
+    actions:
+      - click: "${EDIT_BUTTON}"
+      - wait_for: "${FORM_CONTAINER}"
+      - wait: 1000
+    narration_notes: "Need to make changes? Just click edit..."
+
+  - name: "Make changes"
+    description: "Modify a field"
+    actions:
+      - triple_click: "${FIELD_1_INPUT}"  # Select all
+      - type:
+          text: "${FIELD_1_UPDATED}"
+          human_like: true
+      - wait: 500
+    narration_notes: "...update the fields as needed..."
+
+  - name: "Save changes"
+    description: "Save the edits"
+    actions:
+      - click: "${SAVE_BUTTON}"
+      - wait_for_idle: true
+      - wait: 1000
+      - screenshot: true
+    narration_notes: "...and save. Changes are reflected immediately."
+
+  - name: "Delete item"
+    description: "Delete the test item"
+    actions:
+      - click: "${DELETE_BUTTON}"
+      - wait: 500
+      - click: "${CONFIRM_DELETE}"  # Confirmation dialog
+      - wait_for_idle: true
+      - wait: 1500
+    narration_notes: "And when you're done, simply delete it. That's the full CRUD workflow!"
+
+teardown:
+  - run: "${CLEANUP_COMMAND}"
+
+variables:
+  APP_BASE_URL:
+    description: "Base URL of your application"
+    example: "http://localhost:3000"
+
+  LISTING_PATH:
+    description: "Path to the listing page"
+    example: "/items"
+
+  ITEM_NAME:
+    description: "Human-readable name for the item type"
+    example: "project"
+
+  ITEMS_CONTAINER:
+    description: "Selector for the items list"
+    example: ".items-grid"
+
+  CREATE_BUTTON:
+    description: "Selector for create button"
+    example: "button:has-text('Create')"
+
+  FORM_CONTAINER:
+    description: "Selector for the form modal/page"
+    example: "[role='dialog']"
+
+  FIELD_1_INPUT:
+    description: "Selector for first form field"
+    example: "input[name='name']"
+
+  FIELD_1_NAME:
+    description: "Label for first field"
+    example: "name"
+
+  FIELD_1_VALUE:
+    description: "Value to enter in first field"
+    example: "Demo Project"
+
+  FIELD_1_UPDATED:
+    description: "Updated value for first field"
+    example: "Updated Demo Project"
+
+  FIELD_2_INPUT:
+    description: "Selector for second form field"
+    example: "textarea[name='description']"
+
+  FIELD_2_NAME:
+    description: "Label for second field"
+    example: "description"
+
+  FIELD_2_VALUE:
+    description: "Value to enter in second field"
+    example: "A demo project for testing"
+
+  SUBMIT_BUTTON:
+    description: "Selector for form submit button"
+    example: "button[type='submit']"
+
+  SAVE_BUTTON:
+    description: "Selector for save button (on edit)"
+    example: "button:has-text('Save')"
+
+  CREATED_ITEM:
+    description: "Selector for the newly created item"
+    example: "[data-name='Demo Project']"
+
+  EDIT_BUTTON:
+    description: "Selector for edit button"
+    example: "[aria-label='Edit']"
+
+  DELETE_BUTTON:
+    description: "Selector for delete button"
+    example: "[aria-label='Delete']"
+
+  CONFIRM_DELETE:
+    description: "Selector for delete confirmation"
+    example: "button:has-text('Confirm')"

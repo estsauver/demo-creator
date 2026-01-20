@@ -1,0 +1,95 @@
+# Example: Test Suite Demo
+# Shows how to demo a test suite with proper error handling
+#
+# This demonstrates:
+# - foreach loops for iterating over items
+# - Smart error detection (won't flag test names containing "error")
+# - Working directory support
+# - Variable interpolation
+
+settings:
+  title: "Discussion Service Test Suite"
+  cwd: backend/
+  cols: 120
+  rows: 40
+  typing_speed: 30
+  post_execute_pause: 2000
+
+  error_detection:
+    mode: smart
+    safe_contexts:
+      - "PASSED"
+      - "FAILED"  # pytest output
+      - "test_error"
+      - "test_fail"
+      - "ERROR"  # Part of test output
+    ignore_patterns:
+      - "test_.*error.*PASSED"
+      - "collecting"
+
+variables:
+  TEST_DIR: tests/services
+  PYTEST_ARGS: "-v --tb=short"
+
+steps:
+  - action: section
+    name: "Test Overview"
+
+  - action: comment
+    content: "Running Discussion Service tests"
+
+  - action: pause
+    duration: 500
+
+  # Show what we're testing
+  - action: section
+    name: "Test Files"
+
+  - action: run
+    content: "ls -la {{ TEST_DIR }}/test_discussion*.py"
+
+  - action: pause
+    duration: 1500
+
+  # Run tests with verbose output
+  - action: section
+    name: "Running Tests"
+
+  - action: run
+    content: "pytest {{ TEST_DIR }}/test_discussion_service.py {{ PYTEST_ARGS }}"
+    ignore_error_patterns:
+      - "ERROR"
+      - "error"
+    narration:
+      before: "Now let's run the full test suite"
+      after: "All tests passed!"
+
+  - action: pause
+    duration: 2000
+
+  # Show specific test categories using foreach
+  - action: section
+    name: "Test Categories"
+
+  - action: comment
+    content: "Running tests by category..."
+
+  - action: foreach
+    items:
+      - "test_discussion_creation"
+      - "test_message_handling"
+      - "test_error_events"
+    template:
+      - action: run
+        content: "pytest {{ TEST_DIR }} -k {{ item }} -v --tb=line"
+      - action: pause
+        duration: 1500
+
+  - action: section
+    name: "Summary"
+
+  - action: run
+    content: "pytest {{ TEST_DIR }} --collect-only | tail -5"
+
+  - action: screenshot
+    name: "test-summary"

@@ -1,0 +1,119 @@
+# DevOps Workflow Demo Template
+# Use for demonstrating DevOps tasks like deployments, container operations, etc.
+
+type: terminal
+name: devops-workflow
+description: Template for DevOps workflow demonstrations
+
+shell: /bin/zsh
+dimensions:
+  cols: 140
+  rows: 45
+
+scenes:
+  - name: "Check environment"
+    narration_notes: "Let's start by checking our environment"
+    actions:
+      - type: command
+        text: "echo '=== DevOps Workflow Demo ==='"
+        delay_after: 1000
+      - type: command
+        text: "${ENV_CHECK_CMD:-kubectl version --short 2>/dev/null || docker --version}"
+        delay_after: 2000
+
+  - name: "View current state"
+    narration_notes: "First, let's see what's currently running"
+    actions:
+      - type: command
+        text: "${STATUS_CMD:-kubectl get pods -n ${NAMESPACE:-default}}"
+        delay_after: 3000
+
+  - name: "Pull latest code"
+    narration_notes: "Let's pull the latest changes"
+    actions:
+      - type: command
+        text: "git pull origin ${BRANCH:-main}"
+        delay_after: 3000
+      - type: wait_for
+        pattern: "Already up to date|Fast-forward|Updating"
+        timeout: 30000
+
+  - name: "Build application"
+    narration_notes: "Now we'll build the application"
+    actions:
+      - type: command
+        text: "${BUILD_CMD:-docker build -t ${IMAGE_NAME:-myapp}:${TAG:-latest} .}"
+        delay_after: 5000
+      - type: wait_for
+        pattern: "Successfully built|Successfully tagged"
+        timeout: 120000
+
+  - name: "Run tests"
+    narration_notes: "Let's run our test suite"
+    actions:
+      - type: command
+        text: "${TEST_CMD:-npm test || pytest}"
+        delay_after: 3000
+      - type: wait_for
+        pattern: "passed|PASSED|All tests passed"
+        timeout: 60000
+
+  - name: "Deploy application"
+    narration_notes: "Now we deploy to our environment"
+    actions:
+      - type: command
+        text: "${DEPLOY_CMD:-kubectl apply -f k8s/deployment.yaml -n ${NAMESPACE:-default}}"
+        delay_after: 3000
+      - type: wait_for
+        pattern: "configured|created|unchanged"
+        timeout: 30000
+
+  - name: "Check deployment status"
+    narration_notes: "Let's verify the deployment is successful"
+    actions:
+      - type: command
+        text: "${ROLLOUT_CMD:-kubectl rollout status deployment/${DEPLOYMENT_NAME:-myapp} -n ${NAMESPACE:-default}}"
+        delay_after: 5000
+      - type: wait_for
+        pattern: "successfully rolled out"
+        timeout: 120000
+
+  - name: "View logs"
+    narration_notes: "We can check the application logs"
+    actions:
+      - type: command
+        text: "${LOGS_CMD:-kubectl logs -l app=${APP_LABEL:-myapp} -n ${NAMESPACE:-default} --tail=20}"
+        delay_after: 3000
+
+  - name: "Health check"
+    narration_notes: "Finally, let's verify the application is healthy"
+    actions:
+      - type: command
+        text: "${HEALTH_CMD:-curl -s ${HEALTH_URL:-http://localhost:8080/health} | jq .}"
+        delay_after: 2000
+      - type: wait_for
+        pattern: "healthy|ok|UP"
+        timeout: 10000
+
+  - name: "Summary"
+    narration_notes: "The deployment is complete and healthy!"
+    actions:
+      - type: command
+        text: "echo '✅ Deployment successful!'"
+        delay_after: 2000
+
+# Variables to customize:
+# ENV_CHECK_CMD - Command to verify environment
+# STATUS_CMD - Command to check current status
+# BRANCH - Git branch to pull
+# BUILD_CMD - Build command
+# IMAGE_NAME, TAG - Docker image details
+# TEST_CMD - Test command
+# DEPLOY_CMD - Deployment command
+# NAMESPACE - Kubernetes namespace
+# DEPLOYMENT_NAME - Name of deployment
+# APP_LABEL - Label selector for pods
+# ROLLOUT_CMD - Rollout status command
+# LOGS_CMD - Command to view logs
+# HEALTH_CMD - Health check command
+# HEALTH_URL - Health endpoint URL

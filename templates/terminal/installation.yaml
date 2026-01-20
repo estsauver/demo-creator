@@ -1,0 +1,114 @@
+# Demo Template: Installation Walkthrough
+# Use for: CLI tool installation and first run demos
+#
+# This template covers:
+# 1. Install the package
+# 2. Verify installation
+# 3. Run first command
+# 4. Show success
+
+type: terminal
+name: installation
+description: CLI installation and first-run demo
+
+config:
+  shell: /bin/zsh
+  dimensions:
+    cols: 120
+    rows: 40
+  typing:
+    speed_min: 0.03
+    speed_max: 0.10
+    mistake_probability: 0.01
+
+scenes:
+  - name: "Install package"
+    description: "Install the CLI tool"
+    actions:
+      - type: command
+        text: "${INSTALL_COMMAND}"
+        delay_after: 5000
+    narration_notes: "First, install {PACKAGE_NAME} using {PACKAGE_MANAGER}."
+
+  - name: "Verify installation"
+    description: "Check the version"
+    actions:
+      - type: command
+        text: "${VERSION_COMMAND}"
+        delay_after: 1500
+    narration_notes: "Let's verify the installation by checking the version."
+
+  - name: "Initialize project"
+    description: "Run the init command"
+    actions:
+      - type: command
+        text: "${INIT_COMMAND}"
+        delay_after: 3000
+      - type: wait_for
+        pattern: "${SUCCESS_PATTERN}"
+        timeout: 30000
+    narration_notes: "Now initialize a new {PROJECT_TYPE}."
+
+  - name: "Show created files"
+    description: "List the generated files"
+    actions:
+      - type: command
+        text: "ls -la ${PROJECT_DIR}"
+        delay_after: 1500
+    narration_notes: "The command created these files automatically."
+
+  - name: "Run first command"
+    description: "Execute the main command"
+    actions:
+      - type: command
+        text: "${FIRST_COMMAND}"
+        delay_after: 3000
+    narration_notes: "Now let's run our first {COMMAND_TYPE}."
+
+  - name: "Celebrate"
+    description: "Show success message"
+    actions:
+      - type: wait
+        delay_after: 2000
+    narration_notes: "And that's it! You're ready to start using {PACKAGE_NAME}."
+
+variables:
+  PACKAGE_NAME:
+    description: "Name of the package"
+    example: "@example/my-cli"
+
+  PACKAGE_MANAGER:
+    description: "Package manager used"
+    example: "npm"
+
+  INSTALL_COMMAND:
+    description: "Full install command"
+    example: "npm install -g @example/my-cli"
+
+  VERSION_COMMAND:
+    description: "Command to check version"
+    example: "fib --version"
+
+  INIT_COMMAND:
+    description: "Project initialization command"
+    example: "fib init my-project"
+
+  SUCCESS_PATTERN:
+    description: "Pattern indicating success"
+    example: "Project initialized"
+
+  PROJECT_TYPE:
+    description: "Type of project being created"
+    example: "project"
+
+  PROJECT_DIR:
+    description: "Directory created"
+    example: "my-project"
+
+  FIRST_COMMAND:
+    description: "First command to run"
+    example: "cd my-project && fib start"
+
+  COMMAND_TYPE:
+    description: "Description of the command"
+    example: "development server"

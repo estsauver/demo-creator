@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/estsauver/demo-creator/config/project-config.schema.json",
+  "title": "Demo Creator Project Configuration",
+  "description": "Configuration schema for demo-creator project settings",
+  "type": "object",
+  "required": ["version", "project", "app"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Configuration schema version"
+    },
+    "project": {
+      "type": "object",
+      "description": "Project metadata",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name",
+          "minLength": 1
+        },
+        "tech_stack": {
+          "type": "string",
+          "description": "Detected or configured technology stack",
+          "enum": ["nextjs", "react", "vue", "svelte", "angular", "javascript", "python", "fastapi", "django", "flask", "other"]
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "description": "Application configuration",
+      "required": ["base_url"],
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "description": "Base URL for the application",
+          "format": "uri"
+        },
+        "health_check": {
+          "type": "string",
+          "description": "Optional health check endpoint path"
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "description": "Authentication configuration",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "description": "Authentication strategy",
+          "enum": ["none", "cookie", "token", "oauth"],
+          "default": "none"
+        },
+        "login_url": {
+          "type": "string",
+          "description": "URL path for login page"
+        },
+        "test_user": {
+          "type": "object",
+          "description": "Test user credentials for automated login",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Test user email"
+            },
+            "password_env": {
+              "type": "string",
+              "description": "Environment variable containing password"
+            }
+          }
+        },
+        "token_env": {
+          "type": "string",
+          "description": "Environment variable containing auth token (for token strategy)"
+        }
+      }
+    },
+    "test_data": {
+      "type": "object",
+      "description": "Test data setup and teardown configuration",
+      "properties": {
+        "setup": {
+          "type": "array",
+          "description": "Commands to run before demo recording",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "teardown": {
+          "type": "array",
+          "description": "Commands to run after demo recording",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "fixtures": {
+          "type": "array",
+          "description": "Fixture files to load",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "recording": {
+      "type": "object",
+      "description": "Recording configuration",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Recording mode",
+          "enum": ["local", "kubernetes"],
+          "default": "local"
+        },
+        "viewport": {
+          "type": "object",
+          "description": "Video viewport dimensions",
+          "properties": {
+            "width": {
+              "type": "integer",
+              "description": "Viewport width in pixels",
+              "default": 1920
+            },
+            "height": {
+              "type": "integer",
+              "description": "Viewport height in pixels",
+              "default": 1080
+            }
+          }
+        },
+        "kubernetes": {
+          "type": "object",
+          "description": "Kubernetes-specific settings",
+          "properties": {
+            "namespace": {
+              "type": "string",
+              "description": "Kubernetes namespace",
+              "default": "infra"
+            },
+            "helm_chart": {
+              "type": "string",
+              "description": "Helm chart name",
+              "default": "screenenv-job"
+            },
+            "context": {
+              "type": "string",
+              "description": "Kubernetes context"
+            }
+          }
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "description": "Voice/narration configuration",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "TTS provider",
+          "enum": ["elevenlabs", "openai"],
+          "default": "elevenlabs"
+        },
+        "voice_id": {
+          "type": "string",
+          "description": "Voice ID (can use ${ENV_VAR} syntax)"
+        }
+      }
+    },
+    "avatar": {
+      "type": "object",
+      "description": "AI presenter avatar configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable avatar overlay",
+          "default": false
+        },
+        "style": {
+          "type": "string",
+          "description": "Avatar display style",
+          "enum": ["picture-in-picture", "side-by-side", "intro-outro", "invisible"],
+          "default": "picture-in-picture"
+        },
+        "position": {
+          "type": "string",
+          "description": "Avatar position for PiP style",
+          "enum": ["top-left", "top-right", "bottom-left", "bottom-right"],
+          "default": "bottom-right"
+        },
+        "size": {
+          "type": "string",
+          "description": "Avatar size",
+          "enum": ["small", "medium", "large"],
+          "default": "small"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output configuration",
+      "properties": {
+        "upload_to": {
+          "type": "string",
+          "description": "Upload destination",
+          "enum": ["gcs", "s3", "local"],
+          "default": "gcs"
+        },
+        "bucket": {
+          "type": "string",
+          "description": "Storage bucket name (can use ${ENV_VAR} syntax)"
+        },
+        "make_public": {
+          "type": "boolean",
+          "description": "Make uploaded files publicly accessible",
+          "default": true
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "description": "Integration configurations",
+      "properties": {
+        "linear": {
+          "type": "object",
+          "properties": {
+            "auto_post": {
+              "type": "boolean",
+              "description": "Auto-post demo link to Linear issue",
+              "default": true
+            }
+          }
+        },
+        "slack": {
+          "type": "object",
+          "properties": {
+            "webhook_url": {
+              "type": "string",
+              "description": "Slack webhook URL (can use ${ENV_VAR} syntax)"
+            },
+            "channel": {
+              "type": "string",
+              "description": "Slack channel to post to"
+            }
+          }
+        }
+      }
+    }
+  }
+}

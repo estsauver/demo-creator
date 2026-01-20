@@ -1,0 +1,99 @@
+# CLI Walkthrough Demo Template
+# Use for demonstrating CLI tool features and common workflows
+
+type: terminal
+name: cli-walkthrough
+description: Template for walking through CLI tool features
+
+shell: /bin/zsh
+dimensions:
+  cols: 120
+  rows: 40
+
+scenes:
+  - name: "Introduction"
+    narration_notes: "Let me show you the key features of our CLI tool"
+    actions:
+      - type: command
+        text: "echo '=== CLI Tool Demo ==='"
+        delay_after: 1500
+      - type: clear
+        delay_after: 500
+
+  - name: "Check version"
+    narration_notes: "First, let's verify the installation"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} --version"
+        delay_after: 2000
+
+  - name: "View help"
+    narration_notes: "Here's an overview of available commands"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} --help"
+        delay_after: 3000
+
+  - name: "List resources"
+    narration_notes: "Let's see what resources we have"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} ${LIST_COMMAND:-list}"
+        delay_after: 2500
+      - type: wait_for
+        pattern: "${LIST_SUCCESS_PATTERN:-.*}"
+        timeout: 10000
+
+  - name: "Create resource"
+    narration_notes: "Now let's create a new resource"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} ${CREATE_COMMAND:-create} ${RESOURCE_NAME:-my-resource}"
+        delay_after: 3000
+      - type: wait_for
+        pattern: "${CREATE_SUCCESS_PATTERN:-created|success}"
+        timeout: 15000
+
+  - name: "View details"
+    narration_notes: "We can inspect the resource we just created"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} ${SHOW_COMMAND:-show} ${RESOURCE_NAME:-my-resource}"
+        delay_after: 2500
+
+  - name: "Modify resource"
+    narration_notes: "Let's make a modification"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} ${UPDATE_COMMAND:-update} ${RESOURCE_NAME:-my-resource} ${UPDATE_FLAGS:---name new-name}"
+        delay_after: 2500
+      - type: wait_for
+        pattern: "${UPDATE_SUCCESS_PATTERN:-updated|success}"
+        timeout: 10000
+
+  - name: "Clean up"
+    narration_notes: "Finally, let's clean up our demo resource"
+    actions:
+      - type: command
+        text: "${CLI_NAME:-mycli} ${DELETE_COMMAND:-delete} ${RESOURCE_NAME:-my-resource} ${DELETE_FLAGS:---yes}"
+        delay_after: 2000
+      - type: wait_for
+        pattern: "${DELETE_SUCCESS_PATTERN:-deleted|removed}"
+        timeout: 10000
+
+  - name: "Wrap up"
+    narration_notes: "And that's a quick tour of the CLI"
+    actions:
+      - type: wait
+        delay_after: 2000
+
+# Variables to customize:
+# CLI_NAME - Name of your CLI tool
+# LIST_COMMAND - Command to list resources
+# CREATE_COMMAND - Command to create resources
+# SHOW_COMMAND - Command to show resource details
+# UPDATE_COMMAND - Command to update resources
+# DELETE_COMMAND - Command to delete resources
+# RESOURCE_NAME - Name of demo resource
+# *_SUCCESS_PATTERN - Regex patterns to match success output
+# *_FLAGS - Additional flags for commands

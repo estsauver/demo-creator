@@ -1,0 +1,41 @@
+{
+  "name": "demo-creator",
+  "owner": {
+    "name": "Earl St Sauver",
+    "email": "estsauver@gmail.com"
+  },
+  "metadata": {
+    "description": "Claude Code plugin for creating professional, automated demo videos",
+    "version": "0.2.0"
+  },
+  "plugins": [
+    {
+      "name": "demo-creator",
+      "source": {
+        "source": "github",
+        "repo": "estsauver/demo-creator"
+      },
+      "description": "Create professional demo videos automatically from code. Analyzes git context, generates Playwright scripts, records in Kubernetes, adds AI narration via ElevenLabs, and uploads to cloud storage.",
+      "version": "0.2.0",
+      "author": {
+        "name": "Earl St Sauver",
+        "email": "estsauver@gmail.com"
+      },
+      "homepage": "https://github.com/estsauver/demo-creator",
+      "repository": "https://github.com/estsauver/demo-creator.git",
+      "license": "MIT",
+      "keywords": [
+        "demo",
+        "video",
+        "recording",
+        "automation",
+        "narration",
+        "playwright",
+        "kubernetes",
+        "elevenlabs",
+        "tts"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

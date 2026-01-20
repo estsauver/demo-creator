@@ -1,0 +1,127 @@
+# Demo Template: Search and Filter
+# Use for: Data listing with search, filters, and result exploration
+#
+# This template covers the common pattern of:
+# 1. Navigate to a listing page
+# 2. Use search input
+# 3. Apply filters
+# 4. Explore results
+
+type: browser
+name: search-filter
+description: Search and filter demo template
+
+config:
+  base_url: "${APP_BASE_URL}"
+  viewport:
+    width: 1920
+    height: 1080
+
+setup:
+  - run: "${SEED_COMMAND}"  # e.g., npm run seed:demo
+
+scenes:
+  - name: "Navigate to listing"
+    description: "Open the page with searchable/filterable data"
+    actions:
+      - goto: "${LISTING_PATH}"  # e.g., /drugs, /products, /users
+      - wait_for_idle: true
+      - wait: 1500
+    narration_notes: "Welcome to our {feature} page. Let me show you how easy it is to find what you're looking for."
+
+  - name: "Show initial state"
+    description: "Briefly show the full list before filtering"
+    actions:
+      - highlight:
+          selector: "${RESULTS_CONTAINER}"  # e.g., .results-list, [data-testid='results']
+          duration: 2000
+      - screenshot: true
+    narration_notes: "Here you can see all available items. But with powerful search and filters, you can quickly narrow down to exactly what you need."
+
+  - name: "Use search"
+    description: "Type in the search box"
+    actions:
+      - click: "${SEARCH_INPUT}"  # e.g., input[type='search'], [placeholder*='Search']
+      - type:
+          text: "${SEARCH_TERM}"  # e.g., "EGFR", "insulin"
+          human_like: true
+      - wait: 500
+      - screenshot: true
+    narration_notes: "Let's search for '{SEARCH_TERM}'. Watch how results update as you type."
+
+  - name: "Show search results"
+    description: "Observe filtered results"
+    actions:
+      - wait_for: "${RESULT_ITEM}"  # e.g., .drug-card, [data-testid='result-item']
+      - wait: 1500
+      - highlight:
+          selector: "${RESULT_ITEM}:first-child"
+          duration: 1500
+    narration_notes: "See how quickly the results narrow down to match your search."
+
+  - name: "Apply filter"
+    description: "Open filter dropdown and select option"
+    actions:
+      - click: "${FILTER_BUTTON}"  # e.g., button:has-text('Filter'), [aria-label='Filters']
+      - wait: 500
+      - click: "${FILTER_OPTION}"  # e.g., [data-value='PHASE_2']
+      - wait_for_idle: true
+      - wait: 1000
+      - screenshot: true
+    narration_notes: "You can also apply filters to refine results even further. Let's filter by {FILTER_NAME}."
+
+  - name: "View item details"
+    description: "Click into a specific result"
+    actions:
+      - click: "${RESULT_ITEM}:first-child"
+      - wait_for_idle: true
+      - wait: 1500
+      - screenshot: true
+    narration_notes: "Clicking any result opens the detailed view with all the information you need."
+
+  - name: "Wrap up"
+    description: "Final pause on the result"
+    actions:
+      - wait: 2000
+    narration_notes: "That's how easy it is to find exactly what you're looking for!"
+
+teardown:
+  - run: "${CLEANUP_COMMAND}"  # e.g., npm run cleanup:demo
+
+# Variable definitions for customization
+variables:
+  APP_BASE_URL:
+    description: "Base URL of your application"
+    example: "http://localhost:3000"
+
+  LISTING_PATH:
+    description: "Path to the listing page"
+    example: "/drugs"
+
+  SEARCH_INPUT:
+    description: "Selector for the search input"
+    example: "input[placeholder*='Search']"
+
+  SEARCH_TERM:
+    description: "Text to type in search"
+    example: "EGFR"
+
+  RESULTS_CONTAINER:
+    description: "Selector for the results container"
+    example: ".results-list"
+
+  RESULT_ITEM:
+    description: "Selector for individual result items"
+    example: ".drug-card"
+
+  FILTER_BUTTON:
+    description: "Selector to open filters"
+    example: "button:has-text('Filter')"
+
+  FILTER_OPTION:
+    description: "Selector for the filter option to select"
+    example: "[data-value='PHASE_2']"
+
+  FILTER_NAME:
+    description: "Human-readable name of the filter"
+    example: "Phase 2 trials"

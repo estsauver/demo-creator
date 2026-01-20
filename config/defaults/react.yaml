@@ -1,0 +1,74 @@
+# Default configuration for React projects
+# Applied when /demo:init detects a React application
+
+version: 1
+
+project:
+  name: "${PROJECT_NAME}"
+  tech_stack: "react"
+
+app:
+  base_url: "http://localhost:3000"
+  health_check: null  # React dev server doesn't have health endpoint
+
+auth:
+  strategy: "none"  # Override if authentication is needed
+  # Uncomment and configure if using auth:
+  # strategy: "cookie"
+  # login_url: "/login"
+  # test_user:
+  #   email: "demo@example.com"
+  #   password_env: "DEMO_USER_PASSWORD"
+
+test_data:
+  setup: []
+  teardown: []
+  fixtures: []
+
+recording:
+  mode: "local"
+  viewport:
+    width: 1920
+    height: 1080
+
+voice:
+  provider: "elevenlabs"
+  voice_id: "${ELEVENLABS_VOICE_ID}"
+
+avatar:
+  enabled: false
+  style: "picture-in-picture"
+  position: "bottom-right"
+  size: "small"
+
+output:
+  upload_to: "gcs"
+  bucket: "${GCS_BUCKET_NAME}"
+  make_public: true
+
+integrations:
+  linear:
+    auto_post: false
+  slack:
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#demos"
+
+# React-specific settings
+selectors:
+  # Common React selector patterns
+  prefer_test_ids: true
+  test_id_attribute: "data-testid"
+
+  # Common component patterns
+  patterns:
+    button: "button, [role='button']"
+    input: "input, textarea, [role='textbox']"
+    link: "a, [role='link']"
+    modal: "[role='dialog'], .modal"
+    dropdown: "[role='listbox'], [role='combobox']"
+
+waiting:
+  # React hydration can cause delays
+  default_timeout: 30000
+  network_idle_timeout: 2000
+  animation_settle: 300

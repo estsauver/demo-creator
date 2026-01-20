@@ -1,0 +1,139 @@
+# Demo Template: API to UI
+# Use for: Showing backend changes reflected in frontend
+#
+# This template demonstrates:
+# 1. Terminal: Make an API call or run a command
+# 2. Browser: Show the result in the UI
+# Perfect for: Admin actions, CLI tools with web dashboards
+
+type: hybrid
+name: api-to-ui
+description: Backend action with frontend result
+
+config:
+  layout: split  # split | sequential | pip
+  terminal:
+    position: left
+    width_percent: 40
+    cols: 80
+    rows: 30
+  browser:
+    position: right
+    base_url: "${APP_BASE_URL}"
+    viewport:
+      width: 1152  # 60% of 1920
+      height: 1080
+
+scenes:
+  - name: "Show initial state"
+    description: "Display the UI before any changes"
+    terminal:
+      actions: []  # No terminal action
+    browser:
+      actions:
+        - goto: "${UI_PATH}"
+        - wait_for_idle: true
+        - wait: 1500
+        - highlight:
+            selector: "${ITEMS_CONTAINER}"
+            duration: 1500
+    narration_notes: "Here's our current {ITEM_NAME} list in the dashboard."
+
+  - name: "Run backend command"
+    description: "Execute the CLI/API command"
+    terminal:
+      actions:
+        - type: command
+          text: "${CLI_COMMAND}"
+          delay_after: 3000
+        - type: wait_for
+          pattern: "${SUCCESS_PATTERN}"
+          timeout: 10000
+    browser:
+      actions:
+        - wait: 2000  # Wait for terminal to finish
+    narration_notes: "Now I'll run a command to {ACTION_DESCRIPTION}."
+
+  - name: "Show command output"
+    description: "Pause on the terminal output"
+    terminal:
+      actions:
+        - type: wait
+          delay_after: 2000
+    browser:
+      actions: []
+    narration_notes: "The command succeeded. Let's see the result in the UI."
+
+  - name: "Refresh and show update"
+    description: "Refresh UI to show changes"
+    terminal:
+      actions: []
+    browser:
+      actions:
+        - click: "${REFRESH_BUTTON}"  # Or reload the page
+        - wait_for_idle: true
+        - wait: 1500
+        - highlight:
+            selector: "${NEW_ITEM}"
+            duration: 2000
+    narration_notes: "The UI updates instantly to reflect the change."
+
+  - name: "Verify details"
+    description: "Click into the new item"
+    terminal:
+      actions: []
+    browser:
+      actions:
+        - click: "${NEW_ITEM}"
+        - wait_for_idle: true
+        - wait: 2000
+    narration_notes: "We can click through to verify all the details are correct."
+
+  - name: "Wrap up"
+    description: "Final state"
+    terminal:
+      actions:
+        - type: command
+          text: "echo 'Demo complete!'"
+          delay_after: 1000
+    browser:
+      actions:
+        - wait: 1500
+    narration_notes: "That's how the CLI and dashboard work together seamlessly."
+
+variables:
+  APP_BASE_URL:
+    description: "Base URL of the web application"
+    example: "http://localhost:3000"
+
+  UI_PATH:
+    description: "Path to the relevant UI page"
+    example: "/admin/users"
+
+  ITEMS_CONTAINER:
+    description: "Selector for the items list"
+    example: ".users-table"
+
+  ITEM_NAME:
+    description: "Human name for the items"
+    example: "user"
+
+  CLI_COMMAND:
+    description: "The command to run"
+    example: "fib user create --name 'Demo User' --email demo@test.com"
+
+  ACTION_DESCRIPTION:
+    description: "What the command does"
+    example: "create a new user"
+
+  SUCCESS_PATTERN:
+    description: "Terminal output indicating success"
+    example: "User created successfully"
+
+  REFRESH_BUTTON:
+    description: "Button to refresh the list"
+    example: "button:has-text('Refresh')"
+
+  NEW_ITEM:
+    description: "Selector for the newly created item"
+    example: "tr:has-text('Demo User')"

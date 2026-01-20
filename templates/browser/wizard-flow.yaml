@@ -1,0 +1,85 @@
+# Wizard Flow Demo Template
+# Use for multi-step form wizards, onboarding flows, or checkout processes
+
+type: browser
+name: wizard-flow
+description: Template for demonstrating multi-step wizard or onboarding flows
+
+base_url: "${BASE_URL}"
+viewport:
+  width: 1920
+  height: 1080
+
+setup:
+  - run: "${SETUP_COMMAND:-echo 'No setup required'}"
+
+scenes:
+  - name: "Start wizard"
+    narration_notes: "Let's walk through the setup process"
+    actions:
+      - goto: "${WIZARD_START_URL:-/onboarding}"
+      - wait_for_idle: true
+      - screenshot: true
+
+  - name: "Step 1 - Basic info"
+    narration_notes: "First, we'll enter some basic information"
+    actions:
+      - wait_for: "${STEP1_INDICATOR:-[data-step='1']}"
+      - highlight:
+          selector: "${STEP1_FORM:-form}"
+          duration: 1500
+      - fill:
+          selector: "${NAME_INPUT:-input[name='name']}"
+          value: "${DEMO_NAME:-Demo User}"
+          human_like: true
+      - fill:
+          selector: "${EMAIL_INPUT:-input[name='email']}"
+          value: "${DEMO_EMAIL:-demo@example.com}"
+          human_like: true
+      - click: "${NEXT_BUTTON:-button:has-text('Next')}"
+      - screenshot: true
+
+  - name: "Step 2 - Configuration"
+    narration_notes: "Next, we configure our preferences"
+    actions:
+      - wait_for: "${STEP2_INDICATOR:-[data-step='2']}"
+      - highlight:
+          selector: "${STEP2_FORM:-form}"
+          duration: 1500
+      - click: "${OPTION_SELECTOR:-[data-option='recommended']}"
+      - wait: 500
+      - click: "${NEXT_BUTTON:-button:has-text('Next')}"
+      - screenshot: true
+
+  - name: "Step 3 - Review"
+    narration_notes: "Finally, we review and confirm our choices"
+    actions:
+      - wait_for: "${STEP3_INDICATOR:-[data-step='3']}"
+      - highlight:
+          selector: "${SUMMARY_SECTION:-.summary}"
+          duration: 2000
+      - screenshot: true
+
+  - name: "Complete wizard"
+    narration_notes: "And we're done! The setup is complete"
+    actions:
+      - click: "${COMPLETE_BUTTON:-button:has-text('Complete')}"
+      - wait_for: "${SUCCESS_INDICATOR:-.success-message}"
+      - highlight:
+          selector: "${SUCCESS_INDICATOR:-.success-message}"
+          duration: 2000
+      - screenshot: true
+
+teardown:
+  - run: "${TEARDOWN_COMMAND:-echo 'No teardown required'}"
+
+# Variables to customize:
+# BASE_URL - Application base URL
+# WIZARD_START_URL - Starting page for wizard
+# STEP1_INDICATOR, STEP2_INDICATOR, STEP3_INDICATOR - Step progress indicators
+# NAME_INPUT, EMAIL_INPUT - Form field selectors
+# DEMO_NAME, DEMO_EMAIL - Demo data values
+# OPTION_SELECTOR - Configuration option to select
+# NEXT_BUTTON - Button to advance steps
+# COMPLETE_BUTTON - Final completion button
+# SUCCESS_INDICATOR - Success message selector

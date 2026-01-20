@@ -1,0 +1,35 @@
+# Default configuration for Next.js projects
+version: 1
+
+project:
+  tech_stack: nextjs
+
+app:
+  base_url: http://localhost:3000
+  health_check: /api/health
+
+auth:
+  strategy: none
+
+test_data:
+  setup: []
+  teardown: []
+
+recording:
+  mode: local
+  viewport:
+    width: 1920
+    height: 1080
+
+voice:
+  provider: elevenlabs
+
+avatar:
+  enabled: false
+  style: picture-in-picture
+  position: bottom-right
+  size: small
+
+output:
+  upload_to: gcs
+  make_public: true
