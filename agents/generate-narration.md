@@ -211,8 +211,13 @@ for i, (timestamp, text) in enumerate(matches, 1):
 
     text_clean = text.strip()
 
+    # Convert periods to commas for SRT format compliance
+    # SRT spec requires comma as decimal separator: 00:00:05,000 not 00:00:05.000
+    start_srt = start_time.replace('.', ',')
+    end_srt = end_time.replace('.', ',')
+
     srt_content.append(f"{i}")
-    srt_content.append(f"{start_time} --> {end_time}")
+    srt_content.append(f"{start_srt} --> {end_srt}")
     srt_content.append(text_clean)
     srt_content.append("")  # Blank line
 

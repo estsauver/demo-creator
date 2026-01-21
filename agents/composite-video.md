@@ -192,49 +192,74 @@ print("✅ Video composition complete")
 PYTHON
 ```
 
-### 5. Add Subtitles (Optional)
+### 5. Embed Subtitle Track
 
-If subtitles are desired, burn them into the video:
+Embed subtitles as a toggleable track in the MP4 container (QuickTime: View → Subtitles → English):
 
 ```bash
 python3 << 'PYTHON'
-import sys, os
+import sys, os, shutil, subprocess
 sys.path.append("plugins/demo-creator")
 from utils.manifest import Manifest
 
 manifest = Manifest("{demo_id}")
 manifest.load()
 
-# Captions are provided as separate track (NOT burned-in)
-# This allows viewers to toggle captions on/off
-print("📄 Preparing caption files...")
-
+final_path = manifest.get_file_path("demo_final.mp4")
 srt_path = manifest.get_file_path(manifest.data['stages'][4]['srt_path'])
+temp_path = manifest.get_file_path("demo_final_temp.mp4")
 
-# Convert SRT to WebVTT for HTML5 video compatibility
-import subprocess
+# Check if SRT exists
+if not os.path.exists(srt_path):
+    print("⚠️ No SRT file found, skipping subtitle embedding")
+    sys.exit(0)
 
-vtt_path = manifest.get_file_path("final_demo.vtt")
+# Rename original to temp
+shutil.move(final_path, temp_path)
+
+# Embed subtitle track using mov_text codec (MP4 compatible)
 cmd = [
     "ffmpeg", "-y",
-    "-i", str(srt_path),
-    str(vtt_path)
+    "-i", str(temp_path),       # Video+audio input
+    "-i", str(srt_path),        # Subtitle input
+    "-c:v", "copy",             # Copy video (no re-encode)
+    "-c:a", "copy",             # Copy audio (no re-encode)
+    "-c:s", "mov_text",         # MOV text subtitles
+    "-metadata:s:s:0", "language=eng",
+    "-metadata:s:s:0", "title=English",
+    str(final_path)
 ]
 
+print("📝 Embedding subtitle track...")
 result = subprocess.run(cmd, capture_output=True, text=True)
 
 if result.returncode == 0:
-    print(f"✅ WebVTT captions created: {vtt_path.name}")
-    print(f"✅ SRT captions available: {srt_path.name}")
+    os.remove(temp_path)
+    print("✅ Subtitle track embedded")
+
+    # Verify subtitle track exists
+    probe_cmd = ["ffprobe", "-v", "error", "-show_entries",
+                 "stream=codec_type,codec_name", "-of", "csv=p=0", str(final_path)]
+    probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
+    print(f"   Streams: {probe_result.stdout.strip()}")
     print("")
-    print("📺 To use captions with HTML5 video:")
-    print('   <video controls>')
-    print('     <source src="final_demo.mp4" type="video/mp4">')
-    print('     <track kind="captions" src="final_demo.vtt" srclang="en" label="English">')
-    print('   </video>')
+    print("📺 Player compatibility:")
+    print("   QuickTime: View → Subtitles → English")
+    print("   VLC: Subtitle → Sub Track → English")
+    print("   YouTube/Vimeo: Auto-detected on upload")
 else:
-    print(f"⚠️ WebVTT conversion failed: {result.stderr}")
-    print("   SRT file still available for manual use")
+    # Restore original if failed
+    shutil.move(temp_path, final_path)
+    print(f"⚠️ Subtitle embedding failed: {result.stderr}")
+    print("   Video available without subtitles")
+
+# Also create WebVTT for HTML5 video compatibility
+vtt_path = manifest.get_file_path("final_demo.vtt")
+vtt_cmd = ["ffmpeg", "-y", "-i", str(srt_path), str(vtt_path)]
+vtt_result = subprocess.run(vtt_cmd, capture_output=True, text=True)
+
+if vtt_result.returncode == 0:
+    print(f"✅ WebVTT also created for HTML5: {vtt_path.name}")
 PYTHON
 ```
 
