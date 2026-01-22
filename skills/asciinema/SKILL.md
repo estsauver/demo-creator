@@ -278,6 +278,17 @@ Use asciinema-player for web embedding:
 
 ## Best Practices
 
+### Philosophy: Show Real Things Working
+
+**The most important rule:** Demos should show the *experience* of using a feature, not the *evidence* that it was built.
+
+- **Never** show `cat file.py` or `head -n 50 code.py` - that's what a PR diff shows
+- **Never** create simulators or mock scripts - if the feature isn't working, fix it first
+- **Always** show real commands producing real output
+- **Rule of thumb:** If your demo could be replaced by linking to the PR, it's not a demo
+
+### Technical Tips
+
 1. **Keep commands short**: Long commands are harder to read
 2. **Add delays after output**: Give viewers time to read
 3. **Use wait_for patterns**: More reliable than fixed delays
