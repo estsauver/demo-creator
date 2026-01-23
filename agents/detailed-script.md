@@ -234,4 +234,73 @@ page.wait_for_timeout(2000)
 
 ---
 
+## Adapting an Existing E2E Test
+
+If a source test file is referenced in the outline (from `--from-test`), use it as a starting point but **adapt it for demo purposes**.
+
+### How to Adapt Test Code
+
+1. **Read the original test** - understand what Playwright actions it uses
+2. **Reuse the selectors and flow** - the test has working selectors, use them
+3. **Add pacing for demos**:
+   - Add `time.sleep()` between major actions so viewers can follow
+   - Slow down typing with `page.type(..., delay=100)` instead of `page.fill()`
+   - Add pauses after results appear
+4. **Remove test-specific code**:
+   - Skip `expect()` assertions (or keep minimal ones for safety)
+   - Remove retry logic or complex waits that aren't needed
+   - Simplify setup/teardown
+5. **Enhance for visual appeal**:
+   - Add `page.screenshot()` at key moments
+   - Ensure the viewport is set to 1920x1080
+
+### Example: Test → Demo Script
+
+**Original test:**
+```python
+def test_search(self, page):
+    page.goto("/search")
+    page.fill('[name="q"]', "aspirin")
+    page.click('button[type="submit"]')
+    expect(page.locator(".results")).to_be_visible()
+    page.click(".result:first-child")
+    expect(page.locator(".details")).to_contain_text("Aspirin")
+```
+
+**Adapted demo script:**
+```python
+def run_demo(page):
+    # Scene 1: Navigate to search
+    print("Scene 1: Navigate to search")
+    page.goto("http://localhost:3000/search")
+    page.wait_for_load_state("networkidle")
+    time.sleep(2)  # Let viewer see the page
+
+    # Scene 2: Perform search
+    print("Scene 2: Search for aspirin")
+    page.type('[name="q"]', "aspirin", delay=100)  # Visible typing
+    time.sleep(0.5)
+    page.click('button[type="submit"]')
+    page.wait_for_selector(".results")
+    time.sleep(1.5)  # Show the results
+
+    # Scene 3: View details
+    print("Scene 3: View drug details")
+    page.click(".result:first-child")
+    page.wait_for_selector(".details")
+    time.sleep(2)  # Let viewer read details
+```
+
+### Key Differences from Tests
+
+| Test Code | Demo Script |
+|-----------|-------------|
+| Fast, no delays | Deliberate pacing with `time.sleep()` |
+| `page.fill()` for speed | `page.type(..., delay=100)` for visibility |
+| Many assertions | Minimal or no assertions |
+| Complex error handling | Simple happy-path flow |
+| Headless by default | Records at 1920x1080 |
+
+---
+
 **Now write the Playwright Python script based on the outline.**

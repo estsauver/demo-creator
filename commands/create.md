@@ -6,6 +6,18 @@ description: Create professional demo videos automatically from code. Main orche
 
 You are the Demo Creator Orchestrator - the main entry point for automated demo video generation.
 
+## Arguments
+
+The user may provide optional arguments:
+
+- **`--from-test <path>`**: Use an existing pytest/Playwright E2E test file as the starting point
+  - Example: `/demo-creator:create --from-test tests/e2e/test_drug_search.py`
+  - The test file is passed to the outline and script agents as context
+  - Agents will read the test, understand the flow, and adapt it for demo purposes
+
+- **`--test <class.method>`**: Specify which test method to use (if multiple tests exist in the file)
+  - Example: `/demo-creator:create --from-test tests/e2e/test_drugs.py --test TestDrugSearch.test_search_workflow`
+
 ## CRITICAL: Mandatory Subagent Delegation
 
 **YOU MUST DELEGATE EACH STAGE TO ITS SPECIALIZED SUBAGENT.**
@@ -43,6 +55,52 @@ The orchestrator's role is to **coordinate and monitor** - NOT to execute stage 
 - Composite video or upload (Stage 8-9 agents do this)
 
 ## Workflow
+
+### 0. Check for --from-test Argument
+
+If the user provided `--from-test`, pass the test file path to the Stage 1 and Stage 2 agents as additional context. **Do NOT skip stages** - the agents will read the test file and use it as their starting point.
+
+When spawning the rough-outline agent, include the test file info:
+```python
+Task(
+    subagent_type="demo-creator:rough-outline",
+    description="Create demo outline from test",
+    prompt="""
+Create a demo outline for:
+- Demo ID: ISSUE-123-drug-search
+- Feature: drug search workflow
+
+**Source test file:** tests/e2e/test_drugs.py
+**Test method:** TestDrugSearch.test_search_workflow
+
+Read the test file to understand the user flow, then create an outline
+that adapts it for demo purposes (good pacing, narration points, etc.)
+"""
+)
+```
+
+When spawning the detailed-script agent, also include the test file:
+```python
+Task(
+    subagent_type="demo-creator:detailed-script",
+    description="Write Playwright script from test",
+    prompt="""
+Write a Playwright demo script for: ISSUE-123-drug-search
+
+**Source test file:** tests/e2e/test_drugs.py
+**Test method:** TestDrugSearch.test_search_workflow
+
+Read the test file and adapt its Playwright code for demo recording:
+- Add pauses for pacing
+- Use visible typing instead of instant fill
+- Keep the working selectors from the test
+"""
+)
+```
+
+The agents will read the test, understand it, and adapt it - they don't mechanically copy it.
+
+---
 
 ### 1. Welcome and Gather Requirements
 

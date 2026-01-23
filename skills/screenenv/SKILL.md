@@ -367,12 +367,59 @@ manifest.complete_stage(2, {
 print("✅ Stage 2 complete: Playwright script created")
 ```
 
+## Adapting Existing E2E Tests for Demos
+
+If you have existing Playwright pytest files, you can use them as a **starting point** for demo scripts. Read the test, understand the flow, and adapt it for demo purposes.
+
+### What to Keep from Tests
+
+- **Working selectors** - The test has already figured out how to find elements
+- **The user flow** - The sequence of actions represents a real user journey
+- **URL paths** - Navigation targets are correct
+
+### What to Change for Demos
+
+| Test Pattern | Demo Adaptation |
+|--------------|-----------------|
+| `page.fill('[name="q"]', "text")` | `page.type('[name="q"]', "text", delay=100)` - visible typing |
+| No delays between actions | Add `time.sleep(1-2)` for pacing |
+| `expect(...).to_be_visible()` | Remove or minimize assertions |
+| Complex error handling | Simple happy-path only |
+| Fast execution | Deliberate, watchable pacing |
+
+### Example Adaptation
+
+**Original test:**
+```python
+def test_search(self, page):
+    page.goto("/drugs")
+    page.fill('[name="q"]', "aspirin")
+    page.click('button[type="submit"]')
+    expect(page.locator(".results")).to_be_visible()
+```
+
+**Demo script:**
+```python
+def run_demo(page):
+    print("Scene 1: Navigate to search")
+    page.goto("http://localhost:3000/drugs")
+    time.sleep(2)
+
+    print("Scene 2: Search for aspirin")
+    page.type('[name="q"]', "aspirin", delay=100)
+    time.sleep(0.5)
+    page.click('button[type="submit"]')
+    page.wait_for_selector(".results")
+    time.sleep(2)
+```
+
 ## Summary
 
 - ✅ Screenenv runs Playwright scripts in K8s Jobs
 - ✅ You write standard Playwright Python code
 - ✅ ScreenenvJobManager handles K8s orchestration
 - ✅ Recording happens asynchronously in isolated Pods
+- ✅ Existing E2E tests can be adapted for demos
 - ❌ Screenenv is NOT an MCP server you call directly
 - ❌ Don't create `.mcp.json` for screenenv in plugins
 

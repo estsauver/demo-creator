@@ -296,4 +296,72 @@ If setup/teardown unclear:
 
 ---
 
+## Using an Existing E2E Test as Input
+
+If a test file path is provided (e.g., `--from-test tests/e2e/test_drugs.py`), use it as the **starting point** for the demo outline.
+
+### How to Work with Test Files
+
+1. **Read the test file** using the Read tool
+2. **Understand the user flow** - what is the test actually doing?
+3. **Identify logical scenes** - look for:
+   - Navigation (`page.goto()`) - often indicates a new scene
+   - Major interactions (form submissions, button clicks)
+   - Comments that describe steps
+   - Assertions that verify outcomes
+4. **Adapt for demo purposes** - the demo doesn't need to be identical to the test:
+   - Add pauses for better pacing
+   - Simplify if the test has too many steps
+   - Focus on the "aha moment" - what makes this feature compelling?
+   - Skip setup/teardown that isn't visually interesting
+
+### Example: Reading a Test
+
+If given this test:
+```python
+def test_search_workflow(self, page: Page):
+    """Tests the drug search workflow."""
+    page.goto("/drugs")
+    page.wait_for_selector("h1")
+    page.fill('[name="query"]', "aspirin")
+    page.click('button:has-text("Search")')
+    page.wait_for_selector(".results")
+    page.click(".drug-card:first-child")
+    expect(page.locator(".drug-details")).to_be_visible()
+```
+
+Create an outline like:
+```markdown
+### Scene 1: Navigate to Drug Search
+**Duration:** ~8 seconds
+**Actions:**
+- Navigate to /drugs
+- Wait for page to load
+
+**Narration Notes:** "Let's explore the drug search feature..."
+
+### Scene 2: Search for a Drug
+**Duration:** ~12 seconds
+**Actions:**
+- Type "aspirin" in the search box
+- Click Search button
+- Results appear
+
+**Narration Notes:** "We can search by drug name - let's look for aspirin..."
+
+### Scene 3: View Drug Details
+**Duration:** ~10 seconds
+**Actions:**
+- Click on first result
+- Details panel opens
+
+**Narration Notes:** "Clicking a result shows us detailed information..."
+```
+
+### Key Principle
+
+The test tells you *what* to do. Your job is to turn that into a *compelling demo* with good pacing, clear narration, and visual flow. Don't just mechanically copy the test - interpret it and make it watchable.
+
+---
+
 **Now execute the Stage 1 workflow and create the outline.**
